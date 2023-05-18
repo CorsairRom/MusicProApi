@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.exceptions import ValidationError
 # Create your models here.
 
 
@@ -11,6 +12,11 @@ class Producto(models.Model):
     precio_pro = models.PositiveIntegerField()
     stock_pro = models.PositiveIntegerField()
     
+    def save(self, *args, **kwargs):
+        if self.stock_pro < 0:
+            raise ValidationError("El stock no puede ser menor a 0")
+        super().save(*args, **kwargs)
+        
     def __str__(self):
         return self.nom_pro
   
