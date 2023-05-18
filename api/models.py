@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 # Create your models here.
 
 
@@ -8,13 +9,22 @@ class Producto(models.Model):
     desc_pro = models.CharField(max_length=250)
     cat_pro = models.CharField(max_length=100)
     precio_pro = models.PositiveIntegerField()
-    stock_pro = models.IntegerField()
+    stock_pro = models.PositiveIntegerField()
     
     def __str__(self):
         return self.nom_pro
- 
+  
+class Pedido(models.Model):
+    fecha = models.DateTimeField(auto_now_add=True)
+    rut_cliente = models.CharField(max_length=12)
+    codigo_sucursal = models.IntegerField()
+
+    def __str__(self):
+        return str(self.id)
+    
 class DetallePedido(models.Model):
     codigo_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    codigo_pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, default=1)
     cant_producto= models.PositiveIntegerField() 
     subtotal = models.PositiveIntegerField( default=0)
     
@@ -28,15 +38,11 @@ class DetallePedido(models.Model):
     
     def __str__(self):
         return str(self.codigo_producto)
-    
-    
-class Pedido(models.Model):
-    fecha = models.DateTimeField(auto_now_add=True)
-    rut_cliente = models.CharField(max_length=12)
-    codigo_sucursal = models.IntegerField()
-    detalle_pedido = models.ForeignKey(DetallePedido, on_delete=models.CASCADE, default=1)
-    
-    
-    def __str__(self):
-        return str(self.id)
-    
+ 
+@receiver(post_save, sender= DetallePedido)
+def actualizar_stock(sender, instance, **kwargs):
+    if kwargs.get('created', False):
+        producto = instance.codigo_producto
+        producto.stock_pro -= instance.cant_producto
+        producto.save()
+   

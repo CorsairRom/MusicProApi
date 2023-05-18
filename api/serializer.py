@@ -26,19 +26,8 @@ class DetallePedidoSerializer(serializers.ModelSerializer):
 
 class PedidoSerializer(serializers.ModelSerializer):
     
-    detalle_pedido_id = serializers.PrimaryKeyRelatedField(
-        queryset=DetallePedido.objects.all(),
-        source='detalle_pedido',
-        write_only=True,
-    )
-    detalle_pedido = serializers.SerializerMethodField()
-    
     class Meta:
         model = Pedido
         fields = '__all__'
     
-    def get_detalle_pedido(self, obj):
-        return {'id' : obj.detalle_pedido.id, 
-                'Producto': obj.detalle_pedido.codigo_producto,
-                'Cantidad': obj.detalle_pedido.cant_producto
-                }
+    

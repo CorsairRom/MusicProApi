@@ -18,6 +18,6 @@ class DetallePedidorViewSet(viewsets.ModelViewSet):
     serializer_class = DetallePedidoSerializer
     queryset = DetallePedido.objects.all()
     
-class PedidosWithStockViewSet(viewsets.ModelViewSet):
+class PedidosViewSet(viewsets.ModelViewSet):
     serializer_class = PedidoSerializer
     queryset = Pedido.objects.all()
