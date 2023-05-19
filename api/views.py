@@ -21,3 +21,6 @@ class DetallePedidorViewSet(viewsets.ModelViewSet):
 class PedidosViewSet(viewsets.ModelViewSet):
     serializer_class = PedidoSerializer
     queryset = Pedido.objects.all()
+    
+# Host: https://webpay3g.transbank.cl
+# Host: https://webpay3g.transbank.cl
