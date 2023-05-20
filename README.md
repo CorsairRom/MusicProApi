@@ -39,7 +39,9 @@ La API de NodeJs "**MusicPro-webpay**" posee 3 End-Points, siendo estos:
 
 * POST(`/comprar`): Este nos permite "Llevar a cabo una compra/iniciar una transacción en webpay".
 
-  * Parámetros: Objeto con un "id" de producto valido. por ejemplo:
+  * Parámetros: Objeto con un "id" de producto valido. 
+
+    *por ejemplo:*
 
      ~~~json
      {
@@ -56,4 +58,4 @@ La API de NodeJs "**MusicPro-webpay**" posee 3 End-Points, siendo estos:
 * GET(`/confirmacion`): Este nos permite "revisar el estado final de la transacción" y en base a este retornara un mensaje de confirmación, el mismo envía el id del pedido al api de Django, donde se actualiza en la base de datos.
 
   * Parámetros: Token de la compra (se ingresa automáticamente cuando la compra se realiza).
-  * Retorno: Mensaje de confirmacion de compra.
+  * Retorno: Mensaje de confirmación de compra.
