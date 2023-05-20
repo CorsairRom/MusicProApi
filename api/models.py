@@ -60,3 +60,12 @@ def actualizar_stock(sender, instance, **kwargs):
 @receiver(post_save, sender=Producto)
 def actualizar_detalles(sender, instance, **kwargs):
     DetallePedido.objects.filter(codigo_producto=instance).update(subtotal=instance.precio_pro* F('cant_producto'))
+
+
+@receiver(post_save, sender=DetallePedido)
+def actualizar_total_pedido(sender, instance, **kwargs):
+    pedido = instance.codigo_pedido
+    detalles_pedido = DetallePedido.objects.filter(codigo_pedido=pedido)
+    total_pedido = detalles_pedido.aggregate(total=models.Sum('subtotal'))['total']
+    pedido.total = total_pedido
+    pedido.save()

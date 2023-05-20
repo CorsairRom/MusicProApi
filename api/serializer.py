@@ -29,5 +29,9 @@ class PedidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pedido
         fields = '__all__'
+
+
+    
+    
     
     
