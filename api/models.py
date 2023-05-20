@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
+from django.db.models import F
 # Create your models here.
 
 
@@ -24,7 +25,9 @@ class Pedido(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     rut_cliente = models.CharField(max_length=12)
     codigo_sucursal = models.IntegerField()
-
+    total = models.PositiveIntegerField(null=True, blank=True)
+    estado = models.BooleanField(default=False)    
+    
     def __str__(self):
         return str(self.id)
     
@@ -44,6 +47,8 @@ class DetallePedido(models.Model):
     
     def __str__(self):
         return str(self.codigo_producto)
+    
+
  
 @receiver(post_save, sender= DetallePedido)
 def actualizar_stock(sender, instance, **kwargs):
@@ -52,3 +57,6 @@ def actualizar_stock(sender, instance, **kwargs):
         producto.stock_pro -= instance.cant_producto
         producto.save()
    
+@receiver(post_save, sender=Producto)
+def actualizar_detalles(sender, instance, **kwargs):
+    DetallePedido.objects.filter(codigo_producto=instance).update(subtotal=instance.precio_pro* F('cant_producto'))

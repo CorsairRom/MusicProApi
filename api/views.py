@@ -17,6 +17,8 @@ class ProductoWithStockViewSet(viewsets.ModelViewSet):
 class DetallePedidorViewSet(viewsets.ModelViewSet):
     serializer_class = DetallePedidoSerializer
     queryset = DetallePedido.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['codigo_pedido']
     
 class PedidosViewSet(viewsets.ModelViewSet):
     serializer_class = PedidoSerializer
