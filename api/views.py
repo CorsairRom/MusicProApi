@@ -16,6 +16,7 @@ class ProductoWithStockViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
     queryset = Producto.objects.exclude(stock_pro = 0)
     
+    
 class DetallePedidorViewSet(viewsets.ModelViewSet):
     serializer_class = DetallePedidoSerializer
     queryset = DetallePedido.objects.all()
