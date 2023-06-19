@@ -59,3 +59,31 @@ La API de NodeJs "**MusicPro-webpay**" posee 3 End-Points, siendo estos:
 
   * Parámetros: Token de la compra (se ingresa automáticamente cuando la compra se realiza).
   * Retorno: Mensaje de confirmación de compra.
+
+---
+
+## Testing NodeJs
+
+El código tiene una implementación de Jest.js para facilitar el testing.
+
+Para poder ejecutar estas pruebas tendrás que:
+
++ En nuestro archivo `main.js`, comenta el siguiente bloque de codigo:
+
+  ~~~ js
+  // comenta todo esto 
+  app.listen(port, ()=>{
+      console.log('la pagina ha funcionado en: http://localhost:' + port);
+  })
+  ~~~
+
++ En el mismo archivo, descomenta la "exportación" de `app`:
+
+  ~~~js
+  // descomentar para testing
+  module.exports = app;
+  ~~~
+
++ Finalmente en la terminal ejecuta el comando: `npx jest test.js --detectOpenHandles`
+
+*Ojo: recuerda que el servidor de Django debe estar ejecutándose*.
