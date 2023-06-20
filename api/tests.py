@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from rest_framework.test import APIClient, APIRequestFactory
 from rest_framework import status
-from .models import Producto, Pedido
+from .models import Producto, Pedido, DetallePedido
 
 
 #probar todos los crud
@@ -27,10 +27,6 @@ class test_response_status_producto(TestCase):
         self.assertEqual(len(response.data), Producto.objects.count())
     
     
-        
-        
-    
-  
 class AddProductos(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -40,7 +36,7 @@ class AddProductos(TestCase):
           'desc_pro' : 'Una esclusiva guitarra electrica para entusiastas',
           'cat_pro' : "Guitarras electricas",
           'precio_pro' : 60000,
-          'stock_pro' : 4
+          'stock_pro' : 2
         }
         # self.producto_created = Producto.objects.create(**producto)
         
@@ -110,6 +106,63 @@ class AddDetalle(TestCase):
         detalle_created = self.client.post(url, self.detalle)
         
         self.assertEqual(detalle_created.status_code, 201)
-        print("Producto", productos)
+        print("Producto", productos.stock_pro)
         print("pedido",pedido)
-            
+        print("detalle",detalle_created.content)
+
+class SignalStock(TestCase):
+    
+    def setUp(self):
+        self.client = APIClient()
+        self.tes = Client()
+        self.addProductos = AddProductos()
+        self.addpedido = AddPedido()
+        self.adddetalle = AddDetalle()
+        self.addProductos.setUp()
+        self.addpedido.setUp()
+        self.adddetalle.setUp()
+        self.addProductos.test_post_producto()
+        self.addpedido.test_post_pedido()
+        self.adddetalle.test_post_detalle()
+    
+    def test_signal_stock(self):
+        producto = Producto.objects.get(pk=1).stock_pro
+        self.assertEqual(producto, 0, 'Error de igualacion')
+        print("stock", producto)
+        if producto == 0:
+            print('Test Ok!')
+
+class OutStock(TestCase):
+    
+    def setUp(self):
+        self.client = APIClient()
+        self.tes = Client()
+        self.signalStock = SignalStock()
+        self.signalStock.setUp()
+        self.adddetalle = AddDetalle()
+        self.adddetalle.setUp()
+    
+    def test_out_stock(self):
+        print('Realizando compra con producto sin stock') 
+        producto = Producto.objects.get(pk=1).stock_pro
+        print('Stock actual: ', producto)
+        self.adddetalle.test_post_detalle()
+
+
+class PedidoTotal(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.tes = Client()
+        self.signalStock = SignalStock()
+        self.signalStock.setUp()
+        url = '/api/pedido/'
+        self.response = self.client.get(url)
+        
+    def test_total(self):
+        pedido = Pedido.objects.get(pk=1).total
+        print('Total: ', pedido)
+        self.assertEqual(pedido, 120000, 'Error de igualacion')
+        print(self.response.content)
+        if pedido == 120000:
+            print('Test Ok!')
+   
