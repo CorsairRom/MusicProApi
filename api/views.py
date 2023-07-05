@@ -107,8 +107,9 @@ class DetallePedidorViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         
-        producto_id = request.data.get('codigo_producto')
-        cantidad = request.data.get('cant_producto')
+        producto_id = request.data.get('codigo_producto_id')
+        cantidad = int(request.data.get('cant_producto'))
+        
         try:
             producto = Producto.objects.get(pk= producto_id)
             
@@ -117,8 +118,9 @@ class DetallePedidorViewSet(viewsets.ModelViewSet):
                     "Error": "No Hay suficiente stock", "cod": "400"},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            producto.stock_pro -= cantidad
+            
             producto.save()
+            
             return super().create(request, *args, **kwargs)
         except Producto.DoesNotExist:
             return Response(

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-vtwtz9$w&8-ih@f=b2f3i#6!e7c73*m-+fg+36*gb)%!xk$@4!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-AUTH_USER_MODEL = 'api.Usuario'
+# AUTH_USER_MODEL = 'api.Usuario'
 # Application definition
 
 INSTALLED_APPS = [
