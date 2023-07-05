@@ -1,10 +1,48 @@
 from django.db import models
 from django.db.models.signals import post_save
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from django.db.models import F
+from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import User as AuthUser
+
+from api.managers import GestorUsuario
 # Create your models here.
 
+class Usuario(AbstractBaseUser, PermissionsMixin):
+    """
+    Modelo que representa a los usuarios del sistema, basado en AbstractBaseUser.
+    """
+    groups = models.ManyToManyField(
+        Group,
+        related_name='usuarios',
+        blank=True,
+    )
+
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='usuarios',
+        blank=True,
+    )
+    username = models.CharField(max_length=255, unique=True)
+    email = models.EmailField('Email', max_length=255, unique=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    objects = GestorUsuario()
+
+    class Meta:
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
+
+    def natural_key(self):
+        return (self.username)
+    
+    def __str__(self):
+        return f'{self.username}'
 
 class Producto(models.Model):
     nom_pro = models.CharField(max_length=50)
