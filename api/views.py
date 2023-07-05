@@ -105,6 +105,27 @@ class DetallePedidorViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['codigo_pedido']
     
+    def create(self, request, *args, **kwargs):
+        
+        producto_id = request.data.get('codigo_producto')
+        cantidad = request.data.get('cant_producto')
+        try:
+            producto = Producto.objects.get(pk= producto_id)
+            
+            if producto.stock_pro < cantidad:
+                return Response({
+                    "Error": "No Hay suficiente stock", "cod": "400"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            producto.stock_pro -= cantidad
+            producto.save()
+            return super().create(request, *args, **kwargs)
+        except Producto.DoesNotExist:
+            return Response(
+                {'error': 'El producto especificado no existe.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+    
 class PedidosViewSet(viewsets.ModelViewSet):
     serializer_class = PedidoSerializer
     queryset = Pedido.objects.all()
